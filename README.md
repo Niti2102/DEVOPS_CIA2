@@ -102,7 +102,7 @@ The workflow publishes the image to the public GHCR package `ghcr.io/josondev/ci
 
 - GitHub repository: https://github.com/josondev/DevOps-Cia-2
 - AKS cluster: `devops-cia2-aks` in `new-devops-cia2-rg` (`centralindia`)
-- Application: http://4.187.190.194/
+- Public landing page: http://4.187.190.194/
 - Health: http://4.187.190.194/health
 - Deployed version: http://4.187.190.194/api/version
 - Live deployment link: http://4.187.190.194/
@@ -110,6 +110,8 @@ The workflow publishes the image to the public GHCR package `ghcr.io/josondev/ci
 - Security scan: Gitleaks runs as the first required GitHub Actions job.
 
 The demo deployment uses one `Standard_D2s_v4` AKS node and two application replicas. AKS Free tier does not make the worker VM, disk, or public networking free; these resources consume Azure for Students credit while running.
+
+The root URL serves a responsive landing page with the current deployment status, version, environment, project links, and API links. It is served by Spring Boot from the deployed container, so it is available publicly through the AKS LoadBalancer rather than only on localhost.
 
 ## Kubernetes deployment
 

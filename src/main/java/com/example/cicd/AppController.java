@@ -15,13 +15,6 @@ public class AppController {
         this.environment = environment;
     }
 
-    @GetMapping("/")
-    public Map<String, String> home() {
-        return Map.of(
-                "message", "CI/CD Demo App is running",
-                "status", "healthy");
-    }
-
     @GetMapping("/health")
     public Map<String, String> health() {
         return Map.of(

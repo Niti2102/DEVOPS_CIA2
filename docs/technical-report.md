@@ -8,7 +8,7 @@ The project requirement is to create a real CI/CD pipeline for a Java web applic
 
 ## 2. Architecture overview
 
-The application is a lightweight Spring Boot service that exposes a simple homepage, health endpoint, and version endpoint. The pipeline is implemented with GitHub Actions and runs when code is pushed to the main branch. The toolchain includes Java 17 for compilation, Maven for dependency management and test execution, Docker for containerization, and Kubernetes for orchestration.
+The application is a lightweight Spring Boot service that exposes a responsive public landing page, health endpoint, and version endpoint. The pipeline is implemented with GitHub Actions and runs when code is pushed to the main branch. The toolchain includes Java 17 for compilation, Maven for dependency management and test execution, Docker for containerization, and Kubernetes for orchestration.
 
 The deployment target is Azure Kubernetes Service (AKS), which is a managed Kubernetes service in Microsoft Azure. The deployment workflow authenticates to Azure using GitHub OIDC federation, updates the cluster context, and applies the Kubernetes manifests. This avoids keeping a long-lived Azure client secret in GitHub. The service exposes the app through a Load Balancer so it can be accessed externally.
 
@@ -86,14 +86,15 @@ The repository contains these key files:
 - `k8s/service.yaml`: external service definition.
 - `ansible/playbook.yml`: example deployment automation script.
 - `.github/workflows/ci-cd.yml`: CI/CD workflow definition.
+- `src/main/resources/static/index.html`: responsive landing page served at the public root URL.
 
-The version endpoint helps validate that the desired code change is being served by the running cluster. This makes the demonstration easy to understand during a live demo.
+The landing page displays the deployment status and retrieves the current version and environment from the live APIs. The version endpoint also helps validate that the desired code change is being served by the running cluster. This makes the demonstration easy to understand during a live demo.
 
 ## 7. Testing and verification evidence
 
 The application has automated checks for the following behaviors:
 
-- root endpoint returns a success message
+- root endpoint serves the landing page
 - health endpoint reports service health
 - version endpoint returns the app version and metadata
 
@@ -142,7 +143,7 @@ To demonstrate the workflow end-to-end, the following steps can be followed:
 4. Confirm Maven tests pass.
 5. Confirm the Docker image is pushed to the registry.
 6. Confirm the AKS deployment is updated.
-7. Visit `http://4.187.190.194/api/version` to see the new version and `prod` profile.
+7. Visit `http://4.187.190.194/` to view the deployed landing page and `http://4.187.190.194/api/version` to see the new version and `prod` profile.
 
 For the completed demonstration, commit `5493557` changed the application version to `1.0.1`. Pipeline run [41783174461](https://github.com/josondev/DevOps-Cia-2/actions/runs/41783174461) passed, including the Gitleaks gate, published the image, and deployed it automatically. The live deployment is available at [http://4.187.190.194/](http://4.187.190.194/), with health at [http://4.187.190.194/health](http://4.187.190.194/health) and the deployed version at [http://4.187.190.194/api/version](http://4.187.190.194/api/version).
 
