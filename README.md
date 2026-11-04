@@ -155,5 +155,3 @@ This solution follows the requirements of a modern end-to-end CI/CD implementati
 
 
 sample line
-
-sample line 2
