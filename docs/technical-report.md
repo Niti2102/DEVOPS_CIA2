@@ -105,7 +105,7 @@ The local validation command used during development was:
 mvn -B clean test
 ```
 
-The test result was **3 tests, 0 failures, 0 errors**. The successful GitHub Actions run builds and publishes the image, authenticates to Azure using OIDC, and rolls out the deployment: [pipeline run](https://github.com/josondev/DevOps-Cia-2/actions/runs/40829244848).
+The test result was **3 tests, 0 failures, 0 errors**. The successful GitHub Actions run builds and publishes the image, authenticates to Azure using OIDC, and rolls out the deployment: [pipeline run](https://github.com/josondev/DevOps-Cia-2/actions/runs/41783174461).
 
 The deployed endpoint returned `{"status":"UP","service":"cicd-demo"}` at `/health` and `{"app":"cicd-demo","version":"1.0.1","environment":"prod"}` at `/api/version`. The Kubernetes Deployment reported two of two replicas ready.
 
@@ -144,7 +144,7 @@ To demonstrate the workflow end-to-end, the following steps can be followed:
 6. Confirm the AKS deployment is updated.
 7. Visit `http://4.187.190.194/api/version` to see the new version and `prod` profile.
 
-For the completed demonstration, commit `5493557` changed the application version to `1.0.1`. Pipeline run [40829244848](https://github.com/josondev/DevOps-Cia-2/actions/runs/40829244848) passed, published the image, and deployed it automatically.
+For the completed demonstration, commit `5493557` changed the application version to `1.0.1`. Pipeline run [41783174461](https://github.com/josondev/DevOps-Cia-2/actions/runs/41783174461) passed, including the Gitleaks gate, published the image, and deployed it automatically. The live deployment is available at [http://4.187.190.194/](http://4.187.190.194/), with health at [http://4.187.190.194/health](http://4.187.190.194/health) and the deployed version at [http://4.187.190.194/api/version](http://4.187.190.194/api/version).
 
 This proves that a code change can pass through the whole pipeline and appear in the running application automatically.
 
