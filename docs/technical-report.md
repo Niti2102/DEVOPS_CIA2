@@ -35,6 +35,7 @@ flowchart LR
 - Kubernetes: provides container orchestration, scaling, and health checks.
 - Azure AKS: managed Kubernetes reduces administration overhead and is suitable for cloud deployment.
 - GitHub Actions: suitable, low-overhead CI/CD platform integrated with GitHub.
+- Gitleaks: detects accidentally committed secrets before build and deployment.
 - Ansible: useful for repeatable deployment automation and infrastructure configuration tasks.
 
 This toolset is highly compatible with the requirements and is widely used in production-ready DevOps workflows.
@@ -44,17 +45,18 @@ This toolset is highly compatible with the requirements and is widely used in pr
 The pipeline is configured in `.github/workflows/ci-cd.yml` and includes the following stages:
 
 1. Checkout source code.
-2. Set up the Java environment.
-3. Run unit tests with Maven.
-4. Package the application as a JAR.
-5. Build Docker image.
-6. Push image to GitHub Container Registry.
-7. Authenticate to Azure.
-8. Apply Kubernetes manifests.
-9. Wait for rollout completion.
-10. Verify the new version is running.
+2. Scan the full Git history for secrets with Gitleaks.
+3. Set up the Java environment.
+4. Run unit tests with Maven.
+5. Package the application as a JAR.
+6. Build Docker image.
+7. Push image to GitHub Container Registry.
+8. Authenticate to Azure.
+9. Apply Kubernetes manifests.
+10. Wait for rollout completion.
+11. Verify the new version is running.
 
-Each stage is placed in order so that no deployment occurs if tests fail. This is a core DevOps principle: a validated build should be the only artifact considered for deployment.
+The secret-scan job is a required dependency of the build job, so no image is published and no deployment occurs if Gitleaks detects a secret. The later stages are also ordered so that a failed test prevents deployment. This is a core DevOps principle: only a security-checked and validated build should be deployed.
 
 ## 5. Cloud resources and deployment approach
 
@@ -107,6 +109,8 @@ The test result was **3 tests, 0 failures, 0 errors**. The successful GitHub Act
 
 The deployed endpoint returned `{"status":"UP","service":"cicd-demo"}` at `/health` and `{"app":"cicd-demo","version":"1.0.1","environment":"prod"}` at `/api/version`. The Kubernetes Deployment reported two of two replicas ready.
 
+The pipeline now includes a Gitleaks full-history scan as its first required job. A successful scan is evidence that no supported secret pattern was detected in the repository history available to the workflow. Gitleaks complements, rather than replaces, Azure OIDC, least-privilege RBAC, and careful secret management.
+
 ## 8. Challenges and solutions
 
 The Azure for Students subscription rejected the initially selected `Standard_D2s_v3` VM size, so the cluster was created with the subscription-allowed `Standard_D2s_v4` size instead. GitHub's OIDC subject for this repository includes immutable owner and repository IDs; using the older name-only subject caused authentication to fail. The federated credential was updated to match the actual token subject, after which Azure login succeeded. The first AKS deployment also required installing `kubelogin` on the GitHub runner for non-admin Azure RBAC authentication.
@@ -118,6 +122,7 @@ Another challenge is making Kubernetes deployment consistent. Using manifests st
 Production systems should include the following measures:
 
 - short-lived GitHub OIDC tokens instead of stored Azure client secrets
+- Gitleaks secret scanning before image creation and deployment
 - secret management via GitHub Secrets, Azure Key Vault, or Kubernetes Secrets
 - image scanning and vulnerability analysis
 - private registry access for production deployments (the training image is public to allow AKS pulls without a stored token)

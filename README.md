@@ -60,17 +60,23 @@ docker run --rm -p 8080:8080 cicd-demo:local
 
 The GitHub Actions workflow performs the following stages:
 
-1. Check out the source code.
-2. Install Java 17 and Maven dependencies.
-3. Run the automated test suite.
-4. Package the application into a JAR file.
-5. Build the Docker image.
-6. Push the image to GitHub Container Registry.
-7. Authenticate to Azure.
-8. Update the AKS deployment with the new image.
-9. Wait for the rollout to finish.
+1. Check out the full repository history.
+2. Scan the repository for leaked secrets with Gitleaks.
+3. Check out the source code.
+4. Install Java 17 and Maven dependencies.
+5. Run the automated test suite.
+6. Package the application into a JAR file.
+7. Build the Docker image.
+8. Push the image to GitHub Container Registry.
+9. Authenticate to Azure.
+10. Update the AKS deployment with the new image.
+11. Wait for the rollout to finish.
 
 The deployment files are in the `k8s/` folder.
+
+### Security scanning choice
+
+Gitleaks was selected for this coursework because the most important immediate CI/CD security risk is accidentally committing credentials, tokens, private keys, or connection strings. The `secret-scan` job runs before the build job and blocks image publication and deployment if a secret is detected. SonarQube is useful for maintainability, bugs, and code-quality metrics, but it requires a server or SonarCloud project and is less directly related to this small repository's primary release risk.
 
 ### GitHub and Azure configuration
 
@@ -99,7 +105,9 @@ The workflow publishes the image to the public GHCR package `ghcr.io/josondev/ci
 - Application: http://4.187.190.194/
 - Health: http://4.187.190.194/health
 - Deployed version: http://4.187.190.194/api/version
-- Successful pipeline run: https://github.com/josondev/DevOps-Cia-2/actions/runs/40829244848
+- Live deployment link: http://4.187.190.194/
+- Successful pipeline run: https://github.com/josondev/DevOps-Cia-2/actions/runs/40830334794
+- Security scan: Gitleaks runs as the first required GitHub Actions job.
 
 The demo deployment uses one `Standard_D2s_v4` AKS node and two application replicas. AKS Free tier does not make the worker VM, disk, or public networking free; these resources consume Azure for Students credit while running.
 
@@ -125,6 +133,7 @@ ansible-playbook -i ansible/inventory/hosts.ini ansible/playbook.yml
 ## Security and operational considerations
 
 - Use GitHub OIDC or secretless Azure authentication in production.
+- Run Gitleaks or an equivalent secret scanner before building and deploying.
 - Store registry credentials and cloud credentials in GitHub Secrets.
 - Avoid exposing application secrets in YAML manifests.
 - Configure image scanning and container vulnerability checks.
