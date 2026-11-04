@@ -152,3 +152,6 @@ ansible-playbook -i ansible/inventory/hosts.ini ansible/playbook.yml
 ## Why this design works
 
 This solution follows the requirements of a modern end-to-end CI/CD implementation: source code is version controlled, automated tests run on every change, the application is packaged in a container, the image is pushed to a registry, and Kubernetes updates the running service without manual intervention.
+
+
+sample line
