@@ -1,8 +1,8 @@
-target/
+__pycache__/
+.pytest_cache/
+.venv/
 .idea/
 .vscode/
-*.iml
 .DS_Store
 .git/
 *.log
-docs/

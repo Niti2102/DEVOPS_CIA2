@@ -1,16 +1,10 @@
-FROM maven:3.9.9-eclipse-temurin-17 AS build
-WORKDIR /workspace
-
-COPY pom.xml ./
-COPY src ./src
-
-RUN mvn -B clean package -DskipTests
-
-FROM eclipse-temurin:17-jre-jammy
+FROM python:3.12-slim
 WORKDIR /app
 
-COPY --from=build /workspace/target/cicd-demo-1.0.1.jar /app/app.jar
+COPY requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY app.py .
 
 EXPOSE 8080
 
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+CMD ["python", "app.py"]
