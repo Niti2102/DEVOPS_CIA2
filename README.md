@@ -13,6 +13,8 @@ The single-file Flask application is a simple task manager. It provides:
 - `/api/tasks` - task list API
 - `/api/version` - deployment information
 
+The demo uses one Kubernetes replica because tasks are stored in application memory. This keeps the project simple and ensures add, complete, and delete operations use the same task list. A production version would use a database and multiple replicas.
+
 ## Required files
 
 - `app.py` - Flask application

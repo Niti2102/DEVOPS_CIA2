@@ -96,7 +96,8 @@ def get_tasks():
 
 @app.post("/api/tasks")
 def add_task():
-    title = request.json.get("title", "").strip()
+    data = request.get_json(silent=True) or {}
+    title = str(data.get("title", "")).strip()
     if not title:
         return jsonify(error="Task title is required"), 400
     task = {"id": max([task["id"] for task in tasks], default=0) + 1,
@@ -110,7 +111,8 @@ def update_task(task_id):
     task = next((item for item in tasks if item["id"] == task_id), None)
     if task is None:
         return jsonify(error="Task not found"), 404
-    task["done"] = bool(request.json.get("done", False))
+    data = request.get_json(silent=True) or {}
+    task["done"] = bool(data.get("done", False))
     return jsonify(task)
 
 
