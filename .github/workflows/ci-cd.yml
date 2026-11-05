@@ -37,6 +37,11 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Normalize image owner
+        run: |
+          IMAGE_OWNER=$(printf '%s' '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')
+          echo "IMAGE_OWNER=${IMAGE_OWNER}" >> "$GITHUB_ENV"
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -44,8 +49,8 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ghcr.io/${{ github.repository_owner }}/cicd-demo:${{ github.sha }}
-            ghcr.io/${{ github.repository_owner }}/cicd-demo:latest
+            ghcr.io/${{ env.IMAGE_OWNER }}/cicd-demo:${{ github.sha }}
+            ghcr.io/${{ env.IMAGE_OWNER }}/cicd-demo:latest
 
   deploy-to-aks:
     needs: build-test-push
@@ -81,7 +86,9 @@ jobs:
 
       - name: Update Kubernetes image
         run: |
-          sed -i "s#IMAGE_NAME_PLACEHOLDER#ghcr.io/${{ github.repository_owner }}/cicd-demo:${{ github.sha }}#g" k8s/deployment.yaml
+          IMAGE_OWNER=$(printf '%s' '${{ github.repository_owner }}' | tr '[:upper:]' '[:lower:]')
+          IMAGE="ghcr.io/${IMAGE_OWNER}/cicd-demo:${{ github.sha }}"
+          sed -i "s#IMAGE_NAME_PLACEHOLDER#${IMAGE}#g" k8s/deployment.yaml
           kubectl apply -f k8s/namespace.yaml
           kubectl apply -k k8s/
           kubectl rollout status deployment/cicd-demo -n cicd-demo --timeout=180s
