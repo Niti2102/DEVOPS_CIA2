@@ -35,7 +35,7 @@ def home():
       </head>
       <body>
         <main>
-          <h1>Task Manager</h1>
+          <h1>Task Manager for working</h1>
           <p>Add tasks and track your progress.</p>
           <form id="task-form">
             <input id="task-title" placeholder="Enter a task" required>
