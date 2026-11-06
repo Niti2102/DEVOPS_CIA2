@@ -19,6 +19,9 @@ jobs:
       - name: Check out source code
         uses: actions/checkout@v4
 
+      - name: Scan for leaked secrets
+        uses: gitleaks/gitleaks-action@v3
+
       - name: Set up Python 3.12
         uses: actions/setup-python@v5
         with:

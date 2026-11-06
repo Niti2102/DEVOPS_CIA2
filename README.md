@@ -23,6 +23,7 @@ The demo uses one Kubernetes replica because tasks are stored in application mem
 - `Dockerfile` - container image definition
 - `.github/workflows/ci-cd.yml` - CI/CD pipeline
 - `k8s/` - Kubernetes deployment, service, namespace, and Kustomize files
+- `COMMANDS.md` - demonstration and troubleshooting commands
 
 ## Run locally
 
@@ -51,13 +52,14 @@ docker run --rm -p 8080:8080 cicd-demo:local
 The workflow in [`.github/workflows/ci-cd.yml`](.github/workflows/ci-cd.yml) runs for every push to `main`:
 
 1. Checks out the source code.
-2. Installs Python 3.12 and project dependencies.
-3. Runs the pytest unit tests.
-4. Builds and tags a Docker image with the Git commit SHA.
-5. Pushes the image to GitHub Container Registry.
-6. Logs in to Azure using GitHub OIDC.
-7. Updates the image in Azure Kubernetes Service.
-8. Waits for the rollout and checks `/health`.
+2. Scans for leaked secrets with Gitleaks.
+3. Installs Python 3.12 and project dependencies.
+4. Runs the pytest unit tests.
+5. Builds and tags a Docker image with the Git commit SHA.
+6. Pushes the image to GitHub Container Registry.
+7. Logs in to Azure using GitHub OIDC.
+8. Updates the image in Azure Kubernetes Service.
+9. Waits for the rollout and checks `/health`.
 
 No Maven, Java, Gradle, or Ansible is used.
 
