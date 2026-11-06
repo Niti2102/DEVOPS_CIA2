@@ -16,7 +16,7 @@ def home():
     <html lang="en">
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Task Manager</title>
+        <title>Task Managers</title>
         <style>
           body { font-family: Arial, sans-serif; background: #eef4ff; margin: 0; }
           main { max-width: 620px; margin: 60px auto; padding: 28px; background: white;
